@@ -80,10 +80,4 @@ public class ConvertUtil {
 
         return beanList;
     }
-
-    // Run only once when application start
-    @PostConstruct
-    public void sinkConfigCOSSListToDB() throws Exception {
-        cossInvestRepository.saveAll(readCOSSInvestBean());
-    }
 }

@@ -17,12 +17,16 @@ package com.pingcap.ossinsightcoss.interval;
 import com.pingcap.ossinsightcoss.dao.COSSDevDailyRepository;
 import com.pingcap.ossinsightcoss.dao.COSSInvestBean;
 import com.pingcap.ossinsightcoss.dao.COSSInvestRepository;
+import com.pingcap.ossinsightcoss.util.ConvertUtil;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Stack;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * DevDailyBuilder
@@ -38,20 +42,43 @@ public class DevDailyBuilder {
     @Autowired
     COSSInvestRepository cossInvestRepository;
 
-    // refresh from bottom to top
-    Stack<COSSInvestBean> refreshStack = new Stack<>();
+    @Autowired
+    ConvertUtil convertUtil;
 
-    @Scheduled(fixedDelay=30, timeUnit=TimeUnit.SECONDS)
-    public void buildAndRefreshDevDailyOfRepo() {
-        if (refreshStack.isEmpty()) {
-            refreshStack.addAll(cossInvestRepository.findAll());
-            return;
+    @PostConstruct
+    public void buildDevDailyOfRepo() throws Exception {
+        Set<Integer> investIDSetInDatabase = cossInvestRepository.findAll().stream()
+                .map(COSSInvestBean::getId).collect(Collectors.toSet());
+        List<COSSInvestBean> investListInCSV = convertUtil.readCOSSInvestBean();
+        List<COSSInvestBean> needAdd = new LinkedList<>();
+
+        for (COSSInvestBean investCSV : investListInCSV) {
+            if (!investIDSetInDatabase.contains(investCSV.getId())) {
+                needAdd.add(investCSV);
+            }
         }
+        cossInvestRepository.saveAll(needAdd);
+        Set<String> needTransfer = needAdd.stream()
+                .filter(o -> o.getHasGithub() && o.getHasRepo())
+                .map(COSSInvestBean::getGithubName)
+                .collect(Collectors.toSet());
 
-        cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(
-                refreshStack.pop().getGithubName()
-        );
+        for (String transfer: needTransfer) {
+            cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(transfer);
+        }
     }
+
+//    @Scheduled(fixedDelay=30, timeUnit=TimeUnit.SECONDS)
+//    public void buildAndRefreshDevDailyOfRepo() {
+//        if (refreshStack.isEmpty()) {
+//            refreshStack.addAll(cossInvestRepository.findAll());
+//            return;
+//        }
+//
+//        cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(
+//                refreshStack.pop().getGithubName()
+//        );
+//    }
 
     // every day, 00:10 start this job
     @Scheduled(cron = "0 10 0 * * *")
