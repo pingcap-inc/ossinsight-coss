@@ -15,6 +15,7 @@
 package com.pingcap.ossinsightcoss.interval;
 
 import com.pingcap.ossinsightcoss.dao.COSSDevDailyRepository;
+import com.pingcap.ossinsightcoss.dao.COSSDevMonthlyRepository;
 import com.pingcap.ossinsightcoss.dao.COSSInvestBean;
 import com.pingcap.ossinsightcoss.dao.COSSInvestRepository;
 import com.pingcap.ossinsightcoss.util.ConvertUtil;
@@ -38,6 +39,9 @@ import java.util.stream.Collectors;
 public class DevDailyBuilder {
     @Autowired
     COSSDevDailyRepository cossDevDailyRepository;
+
+    @Autowired
+    COSSDevMonthlyRepository cossDevMonthlyRepository;
 
     @Autowired
     COSSInvestRepository cossInvestRepository;
@@ -65,6 +69,7 @@ public class DevDailyBuilder {
 
         for (String transfer: needTransfer) {
             cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(transfer);
+            cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(transfer);
         }
     }
 
@@ -80,9 +85,9 @@ public class DevDailyBuilder {
 //        );
 //    }
 
-    // every day, 00:10 start this job
-    @Scheduled(cron = "0 10 0 * * *")
+    // every day, 01:10 start this job
+    @Scheduled(cron = "0 10 1 * * *")
     public void buildLastDayDevDailyOfRepo() {
-        System.out.println("00:10 reached");
+        System.out.println("01:10 reached");
     }
 }
