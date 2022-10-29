@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -36,18 +35,18 @@ import java.util.stream.Collectors;
  * @date 2022/10/24
  */
 @Service
-public class DevDailyBuilder {
+public class DevBuilder {
     @Autowired
     COSSDevDailyRepository cossDevDailyRepository;
-
     @Autowired
     COSSDevMonthlyRepository cossDevMonthlyRepository;
-
     @Autowired
     COSSInvestRepository cossInvestRepository;
-
     @Autowired
     ConvertUtil convertUtil;
+
+    Stack<COSSInvestBean> refreshDevDailyStack = new Stack<>();
+    Stack<COSSInvestBean> refreshDevMonthlyStack = new Stack<>();
 
     @PostConstruct
     public void buildDevDailyOfRepo() throws Exception {
@@ -73,21 +72,45 @@ public class DevDailyBuilder {
         }
     }
 
-//    @Scheduled(fixedDelay=30, timeUnit=TimeUnit.SECONDS)
-//    public void buildAndRefreshDevDailyOfRepo() {
-//        if (refreshStack.isEmpty()) {
-//            refreshStack.addAll(cossInvestRepository.findAll());
-//            return;
-//        }
-//
-//        cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(
-//                refreshStack.pop().getGithubName()
-//        );
-//    }
-
-    // every day, 01:10 start this job
+    /**
+     * Daily developers data refresh
+     */
+    // every day, 01:10 start produce tasks
     @Scheduled(cron = "0 10 1 * * *")
-    public void buildLastDayDevDailyOfRepo() {
-        System.out.println("01:10 reached");
+    public void addDevDailyDataTaskToStack() {
+        if (refreshDevDailyStack.isEmpty()) {
+            refreshDevDailyStack.addAll(cossInvestRepository.findAll());
+        }
+    }
+
+    // between each task, it will have 30s break.
+    @Scheduled(fixedDelay=30, timeUnit=TimeUnit.SECONDS)
+    public void pickOneDevDailyDataTask() {
+        if (!refreshDevDailyStack.isEmpty()) {
+            cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(
+                    refreshDevDailyStack.pop().getGithubName()
+            );
+        }
+    }
+
+    /**
+     * Monthly developers data refresh
+     */
+    // every month 1st and 2nd day, 00:10 start produce tasks
+    @Scheduled(cron = "0 10 0 1,2 * *")
+    public void addDevMonthlyDataTaskToStack() {
+        if (refreshDevMonthlyStack.isEmpty()) {
+            refreshDevMonthlyStack.addAll(cossInvestRepository.findAll());
+        }
+    }
+
+    // between each task, it will have 5m break.
+    @Scheduled(fixedDelay=5, timeUnit=TimeUnit.MINUTES)
+    public void pickOneDevMonthlyDataTask() {
+        if (!refreshDevMonthlyStack.isEmpty()) {
+            cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(
+                    refreshDevDailyStack.pop().getGithubName()
+            );
+        }
     }
 }
