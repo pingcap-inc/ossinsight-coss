@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://172.16.4.217:4000/gharchive_dev
+    url: jdbc:mysql://192.168.31.31:4000/gharchive_dev
     username: root
     #    password: xxx
     driver-class-name: com.mysql.cj.jdbc.Driver

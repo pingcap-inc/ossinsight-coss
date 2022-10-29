@@ -134,4 +134,22 @@ public class COSSDevDailyBean {
     public void setIssueDevNum(Integer issueDevNum) {
         this.issueDevNum = issueDevNum;
     }
+
+    public String toCSVLine() {
+        return this.getGithubName() + "," +
+                this.getEventDay() + "," +
+                this.getEventNum() + "," +
+                this.getStarNum() + "," +
+                this.getPrNum() + "," +
+                this.getIssueNum() + "," +
+                this.getDevNum() + "," +
+                this.getStarDevNum() + "," +
+                this.getPrDevNum() + "," +
+                this.getIssueDevNum();
+    }
+
+    public static String getCSVHeader() {
+        return "github_name,event_day,event_num,star_num,pr_num,issue_num,dev_num," +
+                "star_dev_num,pr_dev_num,issue_dev_num";
+    }
 }

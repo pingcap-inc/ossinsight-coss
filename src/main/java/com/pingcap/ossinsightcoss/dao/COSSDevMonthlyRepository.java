@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2022/10/24
  */
 @Repository
-public interface COSSDevMonthlyRepository extends JpaRepository<COSSDevDailyBean, Long> {
+public interface COSSDevMonthlyRepository extends JpaRepository<COSSDevMonthlyBean, Long> {
     @Modifying
     @Transactional
     @Query(value = """
