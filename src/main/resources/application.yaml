@@ -9,5 +9,9 @@ spring:
   jpa:
     show-sql: true
     database-platform: org.hibernate.dialect.TiDBDialect
+logging:
+  file:
+    path: .
+    name: ossinsight-coss.log
 coss:
   table-path: data/coss_invest.csv
