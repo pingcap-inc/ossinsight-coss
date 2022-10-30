@@ -10,7 +10,5 @@ Just update [this table](src/main/resources/data/coss_invest.csv) in a PR. If th
 
 - [Dashboard](https://meta.gharchive.live/public/dashboard/edb8aa5b-2c4e-465d-8aec-541594df5b83)
 - [COSS VC Data (JSON)](http://50.112.156.107:8080/coss/all)
-- [COSS Daily GitHub Data (JSON)](http://50.112.156.107:8080/daily/all)
 - [COSS Daily GitHub Data (CSV)](http://50.112.156.107:8080/daily/csv)
-- [COSS Monthly GitHub Data (JSON)](http://50.112.156.107:8080/monthly/all)
 - [COSS Monthly GitHub Data (CSV)](http://50.112.156.107:8080/monthly/csv)

@@ -42,17 +42,12 @@ public class COSSDevDailyController {
     @Autowired
     FileUtil fileUtil;
 
-    @GetMapping("/all")
-    public Object getAll() {
-        return cossDevDailyRepository.findAll();
-    }
-
     @GetMapping("/csv")
     public void getCSV(HttpServletResponse response) throws IOException {
         String csvContent = cossDevDailyRepository.findAll()
                 .stream().map(COSSDevDailyBean::toCSVLine)
                 .collect(Collectors.joining("\n"));
         csvContent = COSSDevDailyBean.getCSVHeader() + "\n" + csvContent;
-        fileUtil.returnFile(response, "monthly.csv", csvContent);
+        fileUtil.returnFile(response, "daily.csv", csvContent);
     }
 }

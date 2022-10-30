@@ -45,11 +45,6 @@ public class COSSDevMonthlyController {
     @Autowired
     FileUtil fileUtil;
 
-    @GetMapping("/all")
-    public Object getAll() {
-        return cossDevMonthlyRepository.findAll();
-    }
-
     @GetMapping("/csv")
     public void getCSV(HttpServletResponse response) throws IOException {
         String csvContent = cossDevMonthlyRepository.findAll()
