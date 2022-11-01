@@ -70,7 +70,7 @@ public class DevBuilder {
         refreshRepoNameStack.addAll(needTransfer);
     }
 
-    @Scheduled(fixedDelay=30, timeUnit=TimeUnit.SECONDS)
+    @Scheduled(fixedDelay=1, timeUnit=TimeUnit.MINUTES)
     public void pickOneNewRepoNeedToUpdate(String transfer) {
         cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(transfer);
         cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(transfer);
