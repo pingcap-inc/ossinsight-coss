@@ -71,9 +71,12 @@ public class DevBuilder {
     }
 
     @Scheduled(fixedDelay=1, timeUnit=TimeUnit.MINUTES)
-    public void pickOneNewRepoNeedToUpdate(String transfer) {
-        cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(transfer);
-        cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(transfer);
+    public void pickOneNewRepoNeedToUpdate() {
+        if (!refreshRepoNameStack.isEmpty()) {
+            String transfer = refreshRepoNameStack.pop();
+            cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(transfer);
+            cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(transfer);
+        }
     }
 
     /**
