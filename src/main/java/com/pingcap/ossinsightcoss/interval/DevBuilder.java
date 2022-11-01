@@ -47,6 +47,7 @@ public class DevBuilder {
 
     Stack<COSSInvestBean> refreshDevDailyStack = new Stack<>();
     Stack<COSSInvestBean> refreshDevMonthlyStack = new Stack<>();
+    Stack<String> refreshRepoNameStack = new Stack<>();
 
     @PostConstruct
     public void buildDevDailyOfRepo() throws Exception {
@@ -66,10 +67,13 @@ public class DevBuilder {
                 .map(COSSInvestBean::getGithubName)
                 .collect(Collectors.toSet());
 
-        for (String transfer: needTransfer) {
-            cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(transfer);
-            cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(transfer);
-        }
+        refreshRepoNameStack.addAll(needTransfer);
+    }
+
+    @Scheduled(fixedDelay=30, timeUnit=TimeUnit.SECONDS)
+    public void pickOneNewRepoNeedToUpdate(String transfer) {
+        cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(transfer);
+        cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(transfer);
     }
 
     /**
