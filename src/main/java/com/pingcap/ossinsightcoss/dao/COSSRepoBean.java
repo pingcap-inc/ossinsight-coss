@@ -50,6 +50,9 @@ public class COSSRepoBean {
     @Column(name = "forks")
     private Long forks;
 
+    @Column(name = "watchers")
+    private Long watchers;
+
     @Column(name = "parent_repo_id")
     private Long parentRepoID;
 
@@ -77,7 +80,7 @@ public class COSSRepoBean {
     public COSSRepoBean() {
     }
 
-    public COSSRepoBean(Long repoID, String repoName, Long ownerID, String ownerLogin, Boolean ownerIsOrg, String description, String primaryLanguage, String license, Long size, Long stars, Long forks, Long parentRepoID, Boolean isFork, Boolean isArchived, Boolean isDeleted, Date latestReleasedAt, Date pushedAt, Date createdAt, Date updatedAt) {
+    public COSSRepoBean(Long repoID, String repoName, Long ownerID, String ownerLogin, Boolean ownerIsOrg, String description, String primaryLanguage, String license, Long size, Long stars, Long forks, Long watchers, Long parentRepoID, Boolean isFork, Boolean isArchived, Boolean isDeleted, Date latestReleasedAt, Date pushedAt, Date createdAt, Date updatedAt) {
         this.repoID = repoID;
         this.repoName = repoName;
         this.ownerID = ownerID;
@@ -89,6 +92,7 @@ public class COSSRepoBean {
         this.size = size;
         this.stars = stars;
         this.forks = forks;
+        this.watchers = watchers;
         this.parentRepoID = parentRepoID;
         this.isFork = isFork;
         this.isArchived = isArchived;
@@ -249,5 +253,13 @@ public class COSSRepoBean {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Long getWatchers() {
+        return watchers;
+    }
+
+    public void setWatchers(Long watchers) {
+        this.watchers = watchers;
     }
 }

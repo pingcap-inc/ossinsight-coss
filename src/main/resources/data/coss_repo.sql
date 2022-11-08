@@ -10,6 +10,7 @@ CREATE TABLE `coss_repo` (
                              `size` bigint(20) NOT NULL DEFAULT '0',
                              `stars` int(11) NOT NULL DEFAULT '0',
                              `forks` int(11) NOT NULL DEFAULT '0',
+                             `watchers` int(11) NOT NULL DEFAULT '0',
                              `parent_repo_id` int(11) DEFAULT NULL,
                              `is_fork` tinyint(1) NOT NULL DEFAULT '0',
                              `is_archived` tinyint(1) NOT NULL DEFAULT '0',

@@ -100,6 +100,7 @@ public class GitHubRepository {
                 (long) ghRepo.getSize(),
                 (long) ghRepo.getStargazersCount(),
                 (long) ghRepo.getForksCount(),
+                (long) ghRepo.getWatchersCount(),
                 parentRepoID,
                 ghRepo.isFork(),
                 ghRepo.isArchived(),
