@@ -2,9 +2,9 @@ package com.pingcap.ossinsightcoss.interval;
 
 import com.pingcap.ossinsightcoss.dao.COSSInvestBean;
 import com.pingcap.ossinsightcoss.dao.COSSInvestRepository;
-import com.pingcap.ossinsightcoss.dao.COSSRepoBean;
-import com.pingcap.ossinsightcoss.dao.COSSRepoRepository;
-import com.pingcap.ossinsightcoss.github.GitHubRepository;
+import com.pingcap.ossinsightcoss.dao.COSSTotalBean;
+import com.pingcap.ossinsightcoss.dao.COSSTotalRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,23 +14,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * DevDailyBuilder
+ * TotalBuilder
  *
  * @author Icemap
- * @date 2022/11/07
+ * @date 2022/11/08
  */
 @Service
-public class RepoBuilder {
-    @Autowired
-    COSSInvestRepository cossInvestRepository;
-    @Autowired
-    COSSRepoRepository cossRepoRepository;
-    @Autowired
-    GitHubRepository gitHubRepository;
-
+public class TotalBuilder {
     Stack<String> refreshRepoNameStack = new Stack<>();
 
-    @Scheduled(cron = "@hourly")
+    @Autowired
+    COSSInvestRepository cossInvestRepository;
+
+    @Autowired
+    COSSTotalRepository cossTotalRepository;
+
+    @Scheduled(cron = "@daily")
     public void produceRefreshTasks() {
         if (refreshRepoNameStack.isEmpty()) {
             refreshRepoNameStack.addAll(
@@ -42,15 +41,15 @@ public class RepoBuilder {
         }
     }
 
-    // break 2 seconds and then pop a repo name, if stack not empty
-    @Scheduled(fixedDelay=2, timeUnit= TimeUnit.SECONDS)
+    // break 30 seconds and then pop a repo name, if stack not empty
+    @Scheduled(fixedDelay=30, timeUnit= TimeUnit.SECONDS)
     public void consumeRefreshTask() {
         if (!refreshRepoNameStack.isEmpty()) {
-            cossRepoRepository.save(
-                    gitHubRepository.convert(
-                            gitHubRepository.get(refreshRepoNameStack.pop())
-                    )
-            );
+            COSSTotalBean totalBean = cossTotalRepository
+                    .selectTotalBeanByRepoName(refreshRepoNameStack.pop());
+            if (totalBean != null) {
+                cossTotalRepository.save(totalBean);
+            }
         }
     }
 }
