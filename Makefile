@@ -23,7 +23,7 @@ start:
 restart:
 	git pull origin main
 	make build
-	pm2 restart pm2.json
+	pm2 startOrRestart pm2.json
 
 stop:
 	pm2 stop pm2.json
