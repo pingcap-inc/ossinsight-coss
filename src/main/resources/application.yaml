@@ -15,3 +15,5 @@ logging:
     name: ossinsight-coss.log
 coss:
   table-path: data/coss_invest.csv
+  github-token: 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
+
