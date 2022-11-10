@@ -16,8 +16,6 @@ package com.pingcap.ossinsightcoss.controller;
 
 import com.pingcap.ossinsightcoss.dao.COSSDevDailyBean;
 import com.pingcap.ossinsightcoss.dao.COSSDevDailyRepository;
-import com.pingcap.ossinsightcoss.dao.COSSDevMonthlyBean;
-import com.pingcap.ossinsightcoss.dao.COSSInvestRepository;
 import com.pingcap.ossinsightcoss.util.FileUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
