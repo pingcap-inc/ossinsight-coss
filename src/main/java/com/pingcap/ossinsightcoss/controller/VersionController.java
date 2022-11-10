@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/alive")
-public class AliveController {
+@RequestMapping("/version")
+public class VersionController {
     @GetMapping
-    public String alive() {
-        return "yes";
+    public String getVersion() {
+        return "0.0.1";
     }
 }
