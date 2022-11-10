@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -33,8 +35,10 @@ public class RepoBuilder {
     @Scheduled(cron = "@hourly")
     public void produceRefreshTasks() {
         if (refreshRepoNameStack.isEmpty()) {
+            List<COSSInvestBean> investBeanList = cossInvestRepository.findAll();
+            Collections.shuffle(investBeanList);
             refreshRepoNameStack.addAll(
-                    cossInvestRepository.findAll().stream()
+                    investBeanList.stream()
                             .filter(o -> o.getHasGithub() && o.getHasRepo())
                             .map(COSSInvestBean::getGithubName)
                             .collect(Collectors.toSet())
@@ -42,8 +46,8 @@ public class RepoBuilder {
         }
     }
 
-    // break 2 seconds and then pop a repo name, if stack not empty
-    @Scheduled(fixedDelay=2, timeUnit= TimeUnit.SECONDS)
+    // break 5 seconds and then pop a repo name, if stack not empty
+    @Scheduled(fixedDelay=5, timeUnit= TimeUnit.SECONDS)
     public void consumeRefreshTask() {
         if (!refreshRepoNameStack.isEmpty()) {
             cossRepoRepository.save(
