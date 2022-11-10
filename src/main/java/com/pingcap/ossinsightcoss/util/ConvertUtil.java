@@ -46,8 +46,12 @@ public class ConvertUtil {
         // "1","Acryl Data","https://github.com/datahub-project/datahub","Seed","9","2021","6","8VC","1","1","datahub-project/datahub","1/6/2021 00:00:00","https://techcrunch.com/2021/06/23/acryl-data-commercializing-linkedins-metadata-tool-datahub-emerges-from-stealth-with-9m-from-8vc-linkedin-and-insight/"
         COSSInvestBean result = new COSSInvestBean();
 
-        csvLine = csvLine.substring(1, csvLine.length() - 1);
         String[] params = csvLine.split("\",\"");
+        if (params.length != 0) {
+            params[0] = params[0].substring(1);
+            params[params.length - 1] = params[params.length - 1]
+                    .substring(0, params[params.length - 1].length() - 1);
+        }
 
         if (params.length != DATA_LENGTH) {
             throw new Exception("data error");

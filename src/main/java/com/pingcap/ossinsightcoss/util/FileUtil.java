@@ -37,7 +37,7 @@ public class FileUtil {
     @Autowired
     Config config;
 
-    public List<String> readAll(String filePath) throws IOException {
+    public List<String> readAllExpectFirstLine(String filePath) throws IOException {
         Resource resource = new ClassPathResource(filePath);
         InputStream inputStream = new BufferedInputStream(resource.getInputStream());
         return new BufferedReader(new InputStreamReader(inputStream))
@@ -46,7 +46,7 @@ public class FileUtil {
 
     public List<String> readCOSSInvest() {
         try {
-            return readAll(config.getTablePath());
+            return readAllExpectFirstLine(config.getTablePath());
         } catch (IOException e) {
             e.printStackTrace();
         }
