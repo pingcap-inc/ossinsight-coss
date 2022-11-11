@@ -15,6 +15,6 @@ public class TestController {
 
     @GetMapping
     public Object test() {
-        return repository.convert(repository.get("pingcap/tidb"));
+        return repository.convert(repository.get("prestodb/presto"));
     }
 }

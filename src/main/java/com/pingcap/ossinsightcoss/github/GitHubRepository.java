@@ -71,12 +71,6 @@ public class GitHubRepository {
         }
 
         try {
-            latestReleasedAt = ghRepo.getLatestRelease().getPublished_at();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
             createdAt = ghRepo.getCreatedAt();
         } catch (IOException e) {
             e.printStackTrace();

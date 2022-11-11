@@ -41,11 +41,6 @@ public class TotalBuilder {
         }
     }
 
-    @PostConstruct
-    public void init() {
-        produceRefreshTasks();
-    }
-
     // break 30 seconds and then pop a repo name, if stack not empty
     @Scheduled(fixedDelay=30, timeUnit= TimeUnit.SECONDS)
     public void consumeRefreshTask() {
