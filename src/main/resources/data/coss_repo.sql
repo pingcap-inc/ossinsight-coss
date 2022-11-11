@@ -6,7 +6,7 @@ CREATE TABLE `coss_repo` (
                              `owner_is_org` tinyint(1) NOT NULL,
                              `description` varchar(512) NOT NULL DEFAULT '',
                              `primary_language` varchar(32) NOT NULL DEFAULT '',
-                             `license` varchar(32) NOT NULL DEFAULT '',
+                             `license` varchar(255) DEFAULT NULL,
                              `size` bigint(20) NOT NULL DEFAULT '0',
                              `stars` int(11) NOT NULL DEFAULT '0',
                              `forks` int(11) NOT NULL DEFAULT '0',

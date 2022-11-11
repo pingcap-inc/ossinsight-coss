@@ -88,8 +88,8 @@ public class GitHubRepository {
                 owner == null ? null : owner.getId(),
                 owner == null ? null : owner.getLogin(),
                 ownerIsOrg,
-                ghRepo.getDescription(),
-                ghRepo.getLanguage(),
+                nullStringToEmpty(ghRepo.getDescription()),
+                nullStringToEmpty(ghRepo.getLanguage()),
                 license,
                 (long) ghRepo.getSize(),
                 (long) ghRepo.getStargazersCount(),
@@ -104,5 +104,9 @@ public class GitHubRepository {
                 createdAt,
                 updatedAt
         );
+    }
+
+    private String nullStringToEmpty(String src) {
+        return src == null ? "" : src;
     }
 }
