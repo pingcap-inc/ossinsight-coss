@@ -16,6 +16,8 @@ package com.pingcap.ossinsightcoss.controller;
 
 import com.pingcap.ossinsightcoss.dao.COSSDevDailyBean;
 import com.pingcap.ossinsightcoss.dao.COSSDevDailyRepository;
+import com.pingcap.ossinsightcoss.dao.COSSDevMonthlyBean;
+import com.pingcap.ossinsightcoss.dao.COSSDevMonthlyRepository;
 import com.pingcap.ossinsightcoss.util.FileUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,29 +25,32 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 /**
- * COSSDevDailyController
+ * COSSDevMonthlyController
  *
  * @author Icemap
- * @date 2022/10/24
+ * @date 2022/10/29
  */
 @RestController
-@RequestMapping("/daily")
-public class COSSDevDailyController {
+@RequestMapping("/monthly")
+public class COSSDevMonthlyController {
     @Autowired
-    COSSDevDailyRepository cossDevDailyRepository;
+    COSSDevMonthlyRepository cossDevMonthlyRepository;
     @Autowired
     FileUtil fileUtil;
 
     @GetMapping("/csv")
     public void getCSV(HttpServletResponse response) throws IOException {
-        String csvContent = cossDevDailyRepository.findAll()
-                .stream().map(COSSDevDailyBean::toCSVLine)
+        String csvContent = cossDevMonthlyRepository.findAll()
+                .stream().map(COSSDevMonthlyBean::toCSVLine)
                 .collect(Collectors.joining("\n"));
-        csvContent = COSSDevDailyBean.getCSVHeader() + "\n" + csvContent;
-        fileUtil.returnFile(response, "daily.csv", csvContent);
+        csvContent = COSSDevMonthlyBean.getCSVHeader() + "\n" + csvContent;
+        fileUtil.returnFile(response, "monthly.csv", csvContent);
     }
 }

@@ -1,39 +1,19 @@
-// Copyright 2022 PingCAP, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package com.pingcap.ossinsightcoss.dao;
 
 import jakarta.persistence.*;
 
 import java.util.Date;
 
-/**
- * COSSDevDailyBean
- *
- * @author Icemap
- * @date 2022/10/24
- */
 @Entity
-@Table(name = "mv_coss_dev_day")
-@IdClass(value = COSSDevDailyKey.class)
-public class COSSDevDailyBean {
+@Table(name = "mv_coss_dev_month")
+@IdClass(value = COSSDevMonthlyKey.class)
+public class COSSDevMonthlyBean {
     @Id
     @Column(name = "github_name")
     private String githubName;
     @Id
-    @Column(name = "event_day")
-    private Date eventDay;
+    @Column(name = "event_month")
+    private Date eventMonth;
 
     // event fields
     @Column(name = "event_num")
@@ -63,12 +43,12 @@ public class COSSDevDailyBean {
         this.githubName = githubName;
     }
 
-    public Date getEventDay() {
-        return eventDay;
+    public Date getEventMonth() {
+        return eventMonth;
     }
 
-    public void setEventDay(Date eventDay) {
-        this.eventDay = eventDay;
+    public void setEventMonth(Date eventMonth) {
+        this.eventMonth = eventMonth;
     }
 
     public Integer getEventNum() {
@@ -137,7 +117,7 @@ public class COSSDevDailyBean {
 
     public String toCSVLine() {
         return this.getGithubName() + "," +
-                this.getEventDay() + "," +
+                this.getEventMonth() + "," +
                 this.getEventNum() + "," +
                 this.getStarNum() + "," +
                 this.getPrNum() + "," +
@@ -149,7 +129,7 @@ public class COSSDevDailyBean {
     }
 
     public static String getCSVHeader() {
-        return "github_name,event_day,event_num,star_num,pr_num,issue_num,dev_num," +
+        return "github_name,event_month,event_num,star_num,pr_num,issue_num,dev_num," +
                 "star_dev_num,pr_dev_num,issue_dev_num";
     }
 }

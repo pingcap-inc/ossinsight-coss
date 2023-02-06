@@ -29,24 +29,6 @@ import java.util.Date;
 @Entity
 @Table(name = "coss_invest")
 public class COSSInvestBean {
-    /**
-     * +---------------+---------------------------------------------------+------+-----+---------+----------------+
-     * | Field         | Type                                              | Null | Key | Default | Extra          |
-     * +---------------+---------------------------------------------------+------+-----+---------+----------------+
-     * | id            | int(11)                                           | NO   | PRI | <null>  | auto_increment |
-     * | company       | varchar(255)                                      | YES  |     | <null>  |                |
-     * | repository    | varchar(255)                                      | YES  |     | <null>  |                |
-     * | stage         | enum('Seed','A','B','C','D','E','F','G','Growth') | YES  |     | <null>  |                |
-     * | round_size    | decimal(10,2)                                     | YES  |     | <null>  |                |
-     * | year          | year(4)                                           | YES  |     | <null>  |                |
-     * | month         | int(11)                                           | YES  |     | <null>  |                |
-     * | lead_investor | varchar(255)                                      | YES  |     | <null>  |                |
-     * | has_repo      | tinyint(1)                                        | YES  |     | <null>  |                |
-     * | has_github    | tinyint(1)                                        | YES  |     | <null>  |                |
-     * | github_name   | varchar(255)                                      | YES  |     | <null>  |                |
-     * | date          | datetime                                          | YES  |     | <null>  |                |
-     * +---------------+---------------------------------------------------+------+-----+---------+----------------+
-     */
     public enum Stage { Seed, A, B, C, D, E, F, G, Growth }
 
     @Id
@@ -85,6 +67,9 @@ public class COSSInvestBean {
 
     @Column(name = "date")
     private Date date;
+
+    @Column(name = "link")
+    private String link;
 
     public Integer getId() {
         return id;
@@ -180,5 +165,13 @@ public class COSSInvestBean {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 }

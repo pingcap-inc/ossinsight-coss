@@ -31,7 +31,8 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 @ConfigurationProperties(prefix="coss")
 public class Config {
 
-    private String tablePath= "";
+    private String tablePath = "";
+    private String githubToken = "";
 
     public String getTablePath() {
         return tablePath;
@@ -39,5 +40,13 @@ public class Config {
 
     public void setTablePath(String tablePath) {
         this.tablePath = tablePath;
+    }
+
+    public String getGithubToken() {
+        return githubToken;
+    }
+
+    public void setGithubToken(String githubToken) {
+        this.githubToken = githubToken;
     }
 }
