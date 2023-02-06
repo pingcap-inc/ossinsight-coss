@@ -21,8 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * BaldertonBuilder
@@ -32,6 +34,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class BaldertonBuilder {
+    Logger logger = Logger.getLogger(BaldertonBuilder.class.getName());
+
     @Autowired
     BaldertonMonthlyRepository baldertonMonthlyRepository;
     @Autowired
@@ -42,12 +46,14 @@ public class BaldertonBuilder {
     @Scheduled(fixedDelay=30, timeUnit= TimeUnit.SECONDS)
     public void buildAndRefreshMonthlyOfRepo() {
         if (refreshStack.isEmpty()) {
-            refreshStack.addAll(baldertonTrackedRepository.findAll());
+            List<BaldertonTrackedBean> baldertonRepos = baldertonTrackedRepository.findAll();
+            logger.info("get " + baldertonRepos.size() + " repos to refresh");
+            refreshStack.addAll(baldertonRepos);
             return;
         }
 
-        baldertonMonthlyRepository.transferBaldertonMonthlyBeanByRepoName(
-                refreshStack.pop().getRepoName()
-        );
+        String repoName = refreshStack.pop().getRepoName();
+        logger.info("start transfer " + repoName);
+        baldertonMonthlyRepository.transferBaldertonMonthlyBeanByRepoName(repoName);
     }
 }
