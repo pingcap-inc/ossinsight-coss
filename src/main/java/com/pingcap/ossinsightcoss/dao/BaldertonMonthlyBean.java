@@ -14,10 +14,7 @@
 
 package com.pingcap.ossinsightcoss.dao;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.Date;
 
@@ -28,6 +25,7 @@ import java.util.Date;
  * @date 2023/2/6
  */
 @Entity
+@IdClass(value = BaldertonMonthlyKey.class)
 @Table(name = "mv_balderton_monthly")
 public class BaldertonMonthlyBean {
     @Id
