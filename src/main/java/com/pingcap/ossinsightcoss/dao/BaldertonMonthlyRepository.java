@@ -32,24 +32,22 @@ public interface BaldertonMonthlyRepository extends JpaRepository<BaldertonMonth
     @Query(value = """
     INSERT INTO mv_balderton_monthly (
         github_name, event_month, 
-        event_num, star_num, 
-        pr_num, issue_num
+        star_num, pr_num, fork_num
     )
     SELECT
         ge.repo_name AS raw_github_name,
         ge.event_month AS raw_event_month,
     
-        COUNT(*) raw_event_num,
         COUNT(CASE WHEN ge.type = "WatchEvent" THEN 1 ELSE NULL END) AS raw_star_num,
         COUNT(CASE WHEN ge.type = "PullRequestEvent" THEN 1 ELSE NULL END) AS raw_pr_num,
-        COUNT(CASE WHEN ge.type = "IssuesEvent" THEN 1 ELSE NULL END) AS raw_issue_num
+        COUNT(CASE WHEN ge.type = "ForkEvent" THEN 1 ELSE NULL END) AS raw_fork_num
     FROM github_events ge
     WHERE ge.repo_name = :repo_name
     AND ge.event_month != DATE_FORMAT(CURRENT_DATE(),'%Y-%m-01')
+    AND ge.event_month >= DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH),'%Y-%m-01')
     GROUP BY ge.repo_name, ge.event_month
     ON DUPLICATE KEY UPDATE 
-        event_num = raw_event_num, star_num = raw_star_num, 
-        pr_num = raw_pr_num, issue_num = raw_issue_num
+        star_num = raw_star_num, pr_num = raw_pr_num, fork_num = raw_fork_num
     """, nativeQuery = true)
     Integer transferBaldertonMonthlyBeanByRepoName(@Param("repo_name") String repoName);
 }

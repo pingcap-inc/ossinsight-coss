@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
@@ -47,6 +48,7 @@ public class BaldertonBuilder {
     public void buildAndRefreshMonthlyOfRepo() {
         if (refreshStack.isEmpty()) {
             List<BaldertonTrackedBean> baldertonRepos = baldertonTrackedRepository.findAll();
+            Collections.shuffle(baldertonRepos);
             logger.info("get " + baldertonRepos.size() + " repos to refresh");
             refreshStack.addAll(baldertonRepos);
             return;
