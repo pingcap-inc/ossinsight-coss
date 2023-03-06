@@ -14,6 +14,7 @@
 
 package com.pingcap.ossinsightcoss.util;
 
+import com.pingcap.ossinsightcoss.dao.BaldertonTrackedBean;
 import com.pingcap.ossinsightcoss.dao.COSSInvestBean;
 import com.pingcap.ossinsightcoss.dao.COSSInvestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,8 @@ public class ConvertUtil {
     COSSInvestRepository cossInvestRepository;
 
     private static final int DATA_LENGTH = 13;
+    private static final int BALDERTON_DATA_LENGTH = 2;
+
     SimpleDateFormat normalFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public COSSInvestBean convertFromCSV (String csvLine) throws Exception {
@@ -80,6 +83,33 @@ public class ConvertUtil {
 
         for (String line: cossCSVList) {
             beanList.add(convertFromCSV(line));
+        }
+
+        return beanList;
+    }
+
+    public BaldertonTrackedBean convertBaldertonTrackedFromCSV (String csvLine) throws Exception {
+        // "company_website","repo_name"
+        // "https://surrealdb.com/","surrealdb/surrealdb"
+        BaldertonTrackedBean result = new BaldertonTrackedBean();
+
+        String[] params = csvLine.split(",");
+        if (params.length != BALDERTON_DATA_LENGTH) {
+            throw new Exception("data error");
+        }
+
+        result.setRepoName(params[0]);
+        result.setCompanyWebsite(params[1]);
+
+        return result;
+    }
+
+    public List<BaldertonTrackedBean> readBaldertonTrackedBean() throws Exception {
+        List<String> baldertonCSVList = fileUtil.readBaldertonTracked();
+        List<BaldertonTrackedBean> beanList = new ArrayList<>();
+
+        for (String line: baldertonCSVList) {
+            beanList.add(convertBaldertonTrackedFromCSV(line));
         }
 
         return beanList;
