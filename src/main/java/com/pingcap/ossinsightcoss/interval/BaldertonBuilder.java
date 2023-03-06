@@ -63,23 +63,38 @@ public class BaldertonBuilder {
         refreshStack.addAll(needAdd);
     }
 
-    /**
-     * Daily balderton data refresh
-     */
-    // every day, 02:10 start produce tasks
-    @Scheduled(cron = "0 10 2 * * *")
-    public void addBaldertonTrackedToStack() {
-        if (refreshStack.isEmpty()) {
-            refreshStack.addAll(baldertonTrackedRepository.findAll());
-        }
-    }
+//    /**
+//     * Daily balderton data refresh
+//     */
+//    // every day, 02:10 start produce tasks
+//    @Scheduled(cron = "0 10 2 * * *")
+//    public void addBaldertonTrackedToStack() {
+//        if (refreshStack.isEmpty()) {
+//            refreshStack.addAll(baldertonTrackedRepository.findAll());
+//        }
+//    }
+//
+//    @Scheduled(fixedDelay=30, timeUnit= TimeUnit.SECONDS)
+//    public void buildAndRefreshMonthlyOfRepo() {
+//        if (!refreshStack.isEmpty()) {
+//            String repoName = refreshStack.pop().getRepoName();
+//            logger.info("start transfer " + repoName);
+//            baldertonMonthlyRepository.transferBaldertonMonthlyBeanByRepoName(repoName);
+//        }
+//    }
 
     @Scheduled(fixedDelay=30, timeUnit= TimeUnit.SECONDS)
     public void buildAndRefreshMonthlyOfRepo() {
-        if (!refreshStack.isEmpty()) {
-            String repoName = refreshStack.pop().getRepoName();
-            logger.info("start transfer " + repoName);
-            baldertonMonthlyRepository.transferBaldertonMonthlyBeanByRepoName(repoName);
+        if (refreshStack.isEmpty()) {
+            List<BaldertonTrackedBean> baldertonRepos = baldertonTrackedRepository.findAll();
+            Collections.shuffle(baldertonRepos);
+            logger.info("get " + baldertonRepos.size() + " repos to refresh");
+            refreshStack.addAll(baldertonRepos);
+            return;
         }
+
+        String repoName = refreshStack.pop().getRepoName();
+        logger.info("start transfer " + repoName);
+        baldertonMonthlyRepository.transferBaldertonMonthlyBeanByRepoName(repoName);
     }
 }
