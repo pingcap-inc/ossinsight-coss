@@ -112,12 +112,8 @@ public class DevBuilder {
     }
 
     // between each task, it will have 5m break.
-    @Scheduled(fixedDelay=1, timeUnit=TimeUnit.MINUTES)
+    @Scheduled(fixedDelay=5, timeUnit=TimeUnit.MINUTES)
     public void pickOneDevMonthlyDataTask() {
-        if (refreshDevMonthlyStack.isEmpty()) {
-            refreshDevMonthlyStack.addAll(cossInvestRepository.findAll());
-        }
-
         if (!refreshDevMonthlyStack.isEmpty()) {
             cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(
                     refreshDevDailyStack.pop().getGithubName()
