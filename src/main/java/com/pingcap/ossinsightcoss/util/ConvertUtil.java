@@ -98,8 +98,8 @@ public class ConvertUtil {
             throw new Exception("data error");
         }
 
-        result.setRepoName(params[0]);
-        result.setCompanyWebsite(params[1]);
+        result.setCompanyWebsite(params[0]);
+        result.setRepoName(params[1]);
 
         return result;
     }
