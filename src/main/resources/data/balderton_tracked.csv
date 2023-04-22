@@ -1,7 +1,7 @@
 "company_website","repo_name"
 https://surrealdb.com/,surrealdb/surrealdb
 https://nebuly.ai/,nebuly-ai/nebullvm
-https://budibase.com/,budibase/budibase
+https://budibase.com/,Budibase/budibase
 https://www.getre.io/,re-data/re-data
 https://www.deepset.ai/,deepset-ai/haystack
 https://www.akeneo.com,akeneo/pim-community-dev
@@ -47,7 +47,7 @@ https://jina.ai/,jina-ai/jina
 https://openbb.co/,OpenBB-finance/OpenBBTerminal
 https://kestra.io/,kestra-io/kestra
 https://weaviate.io/,semi-technologies/weaviate
-https://clickhouse.com/,clickhouse/clickhouse
+https://clickhouse.com/,ClickHouse/ClickHouse
 https://neo4j.com/,neo4j/neo4j
 https://terminusdb.com/,terminusdb/terminusdb
 https://bloop.ai/,BloopAI/bloop
@@ -79,7 +79,7 @@ https://arkhn.org,arkhn/pyrog
 https://qovery.com,Qovery/engine
 https://quickwit.io,quickwit-oss/quickwit
 https://workadventu.re,Escape-Technologies/graphql-armor
-https://gdevelop.io,"4ian/GDevelop"
+https://gdevelop.io,4ian/GDevelop
 https://getlago.com,getlago/lago
 https://formance.com,formancehq/ledger
 https://sigle.io,sigle/sigle
@@ -98,7 +98,7 @@ https://replicate.com/,replicate/cog
 https://www.instill.tech/,instill-ai/vdp
 https://namespace.so/,namespacelabs/foundation
 https://mui.com/,mui/material-ui
-https://www.pometry.com/,raphtory/raphtory
+https://www.pometry.com/,Raphtory/Raphtory
 https://refine.dev/,refinedev/refine
 https://safing.io/,safing/portmaster
 https://coqui.ai/,coqui-ai/TTS
@@ -120,5 +120,5 @@ https://www.boilingdata.com/,boilingdata/node-boilingdata
 https://lets-unify.ai/,unifyai/ivy
 https://tyk.io/,TykTechnologies/tyk
 https://laion.ai/,LAION-AI/Open-Assistant
-https://www.bearer.com/,bearer/bearer
+https://www.bearer.com/,Bearer/bearer
 https://quickwit.io/,quickwit-oss/tantivy
