@@ -1,4 +1,4 @@
-CREATE TABLE `mv_balderton_monthly` (
+CREATE TABLE `mv_b_monthly` (
     `github_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     `event_month` date NOT NULL,
     `star_num` int(11) DEFAULT NULL,

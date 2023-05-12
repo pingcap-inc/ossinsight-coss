@@ -14,7 +14,7 @@
 
 package com.pingcap.ossinsightcoss.util;
 
-import com.pingcap.ossinsightcoss.dao.BaldertonTrackedBean;
+import com.pingcap.ossinsightcoss.dao.BTrackedBean;
 import com.pingcap.ossinsightcoss.dao.COSSInvestBean;
 import com.pingcap.ossinsightcoss.dao.COSSInvestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class ConvertUtil {
     COSSInvestRepository cossInvestRepository;
 
     private static final int DATA_LENGTH = 13;
-    private static final int BALDERTON_DATA_LENGTH = 2;
+    private static final int B_DATA_LENGTH = 2;
 
     SimpleDateFormat normalFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -88,13 +88,13 @@ public class ConvertUtil {
         return beanList;
     }
 
-    public BaldertonTrackedBean convertBaldertonTrackedFromCSV (String csvLine) throws Exception {
+    public BTrackedBean convertBTrackedFromCSV(String csvLine) throws Exception {
         // "company_website","repo_name"
         // "https://surrealdb.com/","surrealdb/surrealdb"
-        BaldertonTrackedBean result = new BaldertonTrackedBean();
+        BTrackedBean result = new BTrackedBean();
 
         String[] params = csvLine.split(",");
-        if (params.length != BALDERTON_DATA_LENGTH) {
+        if (params.length != B_DATA_LENGTH) {
             throw new Exception("data error");
         }
 
@@ -104,12 +104,12 @@ public class ConvertUtil {
         return result;
     }
 
-    public List<BaldertonTrackedBean> readBaldertonTrackedBean() throws Exception {
-        List<String> baldertonCSVList = fileUtil.readBaldertonTracked();
-        List<BaldertonTrackedBean> beanList = new ArrayList<>();
+    public List<BTrackedBean> readBTrackedBean() throws Exception {
+        List<String> bCSVList = fileUtil.readBTracked();
+        List<BTrackedBean> beanList = new ArrayList<>();
 
-        for (String line: baldertonCSVList) {
-            beanList.add(convertBaldertonTrackedFromCSV(line));
+        for (String line: bCSVList) {
+            beanList.add(convertBTrackedFromCSV(line));
         }
 
         return beanList;

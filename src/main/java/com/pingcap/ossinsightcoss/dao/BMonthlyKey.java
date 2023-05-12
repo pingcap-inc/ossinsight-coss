@@ -19,12 +19,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * BaldertonMonthlyKey
+ * BMonthlyKey
  *
  * @author Icemap
  * @date 2023/2/6
  */
-public class BaldertonMonthlyKey  implements Serializable {
+public class BMonthlyKey implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -50,7 +50,7 @@ public class BaldertonMonthlyKey  implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BaldertonMonthlyKey that)) return false;
+        if (!(o instanceof BMonthlyKey that)) return false;
 
         if (getGithubName() != null ? !getGithubName().equals(that.getGithubName()) : that.getGithubName() != null)
             return false;

@@ -14,13 +14,37 @@
 
 package com.pingcap.ossinsightcoss.dao;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import jakarta.persistence.*;
 
 /**
- * BaldertonTrackedRepository
+ * BTrackedBean
  *
  * @author Icemap
- * @date 2023/2/6
+ * @date 2022/10/20
  */
-public interface BaldertonTrackedRepository extends JpaRepository<BaldertonTrackedBean, String> {
+@Entity
+@Table(name = "b_tracked")
+public class BTrackedBean {
+    @Id
+    @Column(name = "repo_name")
+    private String repoName;
+
+    @Column(name = "company_website")
+    private String companyWebsite;
+
+    public String getRepoName() {
+        return repoName;
+    }
+
+    public void setRepoName(String repoName) {
+        this.repoName = repoName;
+    }
+
+    public String getCompanyWebsite() {
+        return companyWebsite;
+    }
+
+    public void setCompanyWebsite(String companyWebsite) {
+        this.companyWebsite = companyWebsite;
+    }
 }

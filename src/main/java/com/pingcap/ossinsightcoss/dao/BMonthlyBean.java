@@ -19,15 +19,15 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 /**
- * BaldertonMonthlyBean
+ * BMonthlyBean
  *
  * @author Icemap
  * @date 2023/2/6
  */
 @Entity
-@IdClass(value = BaldertonMonthlyKey.class)
-@Table(name = "mv_balderton_monthly")
-public class BaldertonMonthlyBean {
+@IdClass(value = BMonthlyKey.class)
+@Table(name = "mv_b_monthly")
+public class BMonthlyBean {
     @Id
     @Column(name = "github_name")
     private String githubName;

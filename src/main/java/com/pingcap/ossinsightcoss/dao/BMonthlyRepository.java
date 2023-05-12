@@ -21,16 +21,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * BaldertonMonthlyRepository
+ * BMonthlyRepository
  *
  * @author Icemap
  * @date 2023/2/6
  */
-public interface BaldertonMonthlyRepository extends JpaRepository<BaldertonMonthlyBean, Long> {
+public interface BMonthlyRepository extends JpaRepository<BMonthlyBean, Long> {
     @Modifying
     @Transactional
     @Query(value = """
-    INSERT INTO mv_balderton_monthly (
+    INSERT INTO mv_b_monthly (
         github_name, event_month, 
         star_num, pr_num, fork_num
     )
@@ -72,5 +72,5 @@ public interface BaldertonMonthlyRepository extends JpaRepository<BaldertonMonth
     ON DUPLICATE KEY UPDATE 
         star_num = raw_star_num, pr_num = raw_pr_num, fork_num = raw_fork_num
     """, nativeQuery = true)
-    Integer transferBaldertonMonthlyBeanByRepoName(@Param("repo_name") String repoName);
+    Integer transferBMonthlyBeanByRepoName(@Param("repo_name") String repoName);
 }

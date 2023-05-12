@@ -53,9 +53,9 @@ public class FileUtil {
         return new ArrayList<>();
     }
 
-    public List<String> readBaldertonTracked() {
+    public List<String> readBTracked() {
         try {
-            return readAllExpectFirstLine(config.getBaldertonTablePath());
+            return readAllExpectFirstLine(config.getBTablePath());
         } catch (IOException e) {
             e.printStackTrace();
         }

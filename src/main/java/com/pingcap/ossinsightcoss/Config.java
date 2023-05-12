@@ -34,7 +34,7 @@ public class Config {
     private String tablePath = "";
     private String githubToken = "";
 
-    private String baldertonTablePath = "";
+    private String bTablePath = "";
 
     public String getTablePath() {
         return tablePath;
@@ -52,11 +52,11 @@ public class Config {
         this.githubToken = githubToken;
     }
 
-    public String getBaldertonTablePath() {
-        return baldertonTablePath;
+    public String getBTablePath() {
+        return bTablePath;
     }
 
-    public void setBaldertonTablePath(String baldertonTablePath) {
-        this.baldertonTablePath = baldertonTablePath;
+    public void setBTablePath(String bTablePath) {
+        this.bTablePath = bTablePath;
     }
 }

@@ -14,9 +14,9 @@
 
 package com.pingcap.ossinsightcoss.interval;
 
-import com.pingcap.ossinsightcoss.dao.BaldertonMonthlyRepository;
-import com.pingcap.ossinsightcoss.dao.BaldertonTrackedBean;
-import com.pingcap.ossinsightcoss.dao.BaldertonTrackedRepository;
+import com.pingcap.ossinsightcoss.dao.BMonthlyRepository;
+import com.pingcap.ossinsightcoss.dao.BTrackedBean;
+import com.pingcap.ossinsightcoss.dao.BTrackedRepository;
 import com.pingcap.ossinsightcoss.util.ConvertUtil;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,48 +29,48 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * BaldertonBuilder
+ * BBuilder
  *
  * @author Icemap
  * @date 2023/2/6
  */
 @Service
-public class BaldertonBuilder {
-    Logger logger = Logger.getLogger(BaldertonBuilder.class.getName());
+public class BBuilder {
+    Logger logger = Logger.getLogger(BBuilder.class.getName());
 
     @Autowired
-    BaldertonMonthlyRepository baldertonMonthlyRepository;
+    BMonthlyRepository bMonthlyRepository;
     @Autowired
-    BaldertonTrackedRepository baldertonTrackedRepository;
+    BTrackedRepository bTrackedRepository;
     @Autowired
     ConvertUtil convertUtil;
 
-    Stack<BaldertonTrackedBean> refreshStack = new Stack<>();
+    Stack<BTrackedBean> refreshStack = new Stack<>();
 
     @PostConstruct
     public void buildDevDailyOfRepo() throws Exception {
-        Set<String> trackedIDSetInDatabase = baldertonTrackedRepository.findAll().stream()
-                .map(BaldertonTrackedBean::getRepoName).collect(Collectors.toSet());
-        List<BaldertonTrackedBean> trackedListInCSV = convertUtil.readBaldertonTrackedBean();
-        Set<BaldertonTrackedBean> needAdd = new HashSet<>();
+        Set<String> trackedIDSetInDatabase = bTrackedRepository.findAll().stream()
+                .map(BTrackedBean::getRepoName).collect(Collectors.toSet());
+        List<BTrackedBean> trackedListInCSV = convertUtil.readBTrackedBean();
+        Set<BTrackedBean> needAdd = new HashSet<>();
 
-        for (BaldertonTrackedBean trackedCSV : trackedListInCSV) {
+        for (BTrackedBean trackedCSV : trackedListInCSV) {
             if (!trackedIDSetInDatabase.contains(trackedCSV.getRepoName())) {
                 needAdd.add(trackedCSV);
             }
         }
-        baldertonTrackedRepository.saveAll(needAdd);
+        bTrackedRepository.saveAll(needAdd);
         refreshStack.addAll(needAdd);
     }
 
 //    /**
-//     * Daily balderton data refresh
+//     * Daily b data refresh
 //     */
 //    // every day, 02:10 start produce tasks
 //    @Scheduled(cron = "0 10 2 * * *")
-//    public void addBaldertonTrackedToStack() {
+//    public void addBTrackedToStack() {
 //        if (refreshStack.isEmpty()) {
-//            refreshStack.addAll(baldertonTrackedRepository.findAll());
+//            refreshStack.addAll(bTrackedRepository.findAll());
 //        }
 //    }
 //
@@ -79,22 +79,22 @@ public class BaldertonBuilder {
 //        if (!refreshStack.isEmpty()) {
 //            String repoName = refreshStack.pop().getRepoName();
 //            logger.info("start transfer " + repoName);
-//            baldertonMonthlyRepository.transferBaldertonMonthlyBeanByRepoName(repoName);
+//            bMonthlyRepository.transferBMonthlyBeanByRepoName(repoName);
 //        }
 //    }
 
     @Scheduled(fixedDelay=30, timeUnit= TimeUnit.SECONDS)
     public void buildAndRefreshMonthlyOfRepo() {
         if (refreshStack.isEmpty()) {
-            List<BaldertonTrackedBean> baldertonRepos = baldertonTrackedRepository.findAll();
-            Collections.shuffle(baldertonRepos);
-            logger.info("get " + baldertonRepos.size() + " repos to refresh");
-            refreshStack.addAll(baldertonRepos);
+            List<BTrackedBean> bRepos = bTrackedRepository.findAll();
+            Collections.shuffle(bRepos);
+            logger.info("get " + bRepos.size() + " repos to refresh");
+            refreshStack.addAll(bRepos);
             return;
         }
 
         String repoName = refreshStack.pop().getRepoName();
         logger.info("start transfer " + repoName);
-        baldertonMonthlyRepository.transferBaldertonMonthlyBeanByRepoName(repoName);
+        bMonthlyRepository.transferBMonthlyBeanByRepoName(repoName);
     }
 }
