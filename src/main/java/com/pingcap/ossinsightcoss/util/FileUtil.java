@@ -53,15 +53,6 @@ public class FileUtil {
         return new ArrayList<>();
     }
 
-    public List<String> readBTracked() {
-        try {
-            return readAllExpectFirstLine(config.getBTablePath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
-    }
-
     public void returnFile(HttpServletResponse response, String fileName, String content) throws IOException {
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding("utf-8");
