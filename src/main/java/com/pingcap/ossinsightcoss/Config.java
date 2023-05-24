@@ -34,8 +34,6 @@ public class Config {
     private String tablePath = "";
     private String githubToken = "";
 
-    private String bTablePath = "";
-
     public String getTablePath() {
         return tablePath;
     }
@@ -50,13 +48,5 @@ public class Config {
 
     public void setGithubToken(String githubToken) {
         this.githubToken = githubToken;
-    }
-
-    public String getBTablePath() {
-        return bTablePath;
-    }
-
-    public void setBTablePath(String bTablePath) {
-        this.bTablePath = bTablePath;
     }
 }

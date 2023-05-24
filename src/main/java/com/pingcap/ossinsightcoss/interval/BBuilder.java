@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * BBuilder
@@ -48,53 +47,27 @@ public class BBuilder {
     Stack<BTrackedBean> refreshStack = new Stack<>();
 
     @PostConstruct
-    public void buildDevDailyOfRepo() throws Exception {
-        Set<String> trackedIDSetInDatabase = bTrackedRepository.findAll().stream()
-                .map(BTrackedBean::getRepoName).collect(Collectors.toSet());
-        List<BTrackedBean> trackedListInCSV = convertUtil.readBTrackedBean();
-        Set<BTrackedBean> needAdd = new HashSet<>();
-
-        for (BTrackedBean trackedCSV : trackedListInCSV) {
-            if (!trackedIDSetInDatabase.contains(trackedCSV.getRepoName())) {
-                needAdd.add(trackedCSV);
-            }
-        }
-        bTrackedRepository.saveAll(needAdd);
-        refreshStack.addAll(needAdd);
+    public void buildDevDailyOfRepo() {
+        addDevMonthlyDataTaskToStack();
     }
 
-//    /**
-//     * Daily b data refresh
-//     */
-//    // every day, 02:10 start produce tasks
-//    @Scheduled(cron = "0 10 2 * * *")
-//    public void addBTrackedToStack() {
-//        if (refreshStack.isEmpty()) {
-//            refreshStack.addAll(bTrackedRepository.findAll());
-//        }
-//    }
-//
-//    @Scheduled(fixedDelay=30, timeUnit= TimeUnit.SECONDS)
-//    public void buildAndRefreshMonthlyOfRepo() {
-//        if (!refreshStack.isEmpty()) {
-//            String repoName = refreshStack.pop().getRepoName();
-//            logger.info("start transfer " + repoName);
-//            bMonthlyRepository.transferBMonthlyBeanByRepoName(repoName);
-//        }
-//    }
-
-    @Scheduled(fixedDelay=30, timeUnit= TimeUnit.SECONDS)
-    public void buildAndRefreshMonthlyOfRepo() {
+    // every month 1st and 2nd day, 02:10 start produce tasks
+    @Scheduled(cron = "0 10 2 1,2 * *")
+    public void addDevMonthlyDataTaskToStack() {
         if (refreshStack.isEmpty()) {
             List<BTrackedBean> bRepos = bTrackedRepository.findAll();
             Collections.shuffle(bRepos);
             logger.info("get " + bRepos.size() + " repos to refresh");
             refreshStack.addAll(bRepos);
-            return;
         }
+    }
 
-        String repoName = refreshStack.pop().getRepoName();
-        logger.info("start transfer " + repoName);
-        bMonthlyRepository.transferBMonthlyBeanByRepoName(repoName);
+    @Scheduled(fixedDelay=30, timeUnit= TimeUnit.SECONDS)
+    public void buildAndRefreshMonthlyOfRepo() {
+        if (!refreshStack.isEmpty()) {
+            String repoName = refreshStack.pop().getRepoName();
+            logger.info("start transfer " + repoName);
+            bMonthlyRepository.transferBMonthlyBeanByRepoName(repoName);
+        }
     }
 }

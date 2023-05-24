@@ -40,7 +40,6 @@ public class ConvertUtil {
     COSSInvestRepository cossInvestRepository;
 
     private static final int DATA_LENGTH = 13;
-    private static final int B_DATA_LENGTH = 2;
 
     SimpleDateFormat normalFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -83,33 +82,6 @@ public class ConvertUtil {
 
         for (String line: cossCSVList) {
             beanList.add(convertFromCSV(line));
-        }
-
-        return beanList;
-    }
-
-    public BTrackedBean convertBTrackedFromCSV(String csvLine) throws Exception {
-        // "company_website","repo_name"
-        // "https://surrealdb.com/","surrealdb/surrealdb"
-        BTrackedBean result = new BTrackedBean();
-
-        String[] params = csvLine.split(",");
-        if (params.length != B_DATA_LENGTH) {
-            throw new Exception("data error");
-        }
-
-        result.setCompanyWebsite(params[0]);
-        result.setRepoName(params[1]);
-
-        return result;
-    }
-
-    public List<BTrackedBean> readBTrackedBean() throws Exception {
-        List<String> bCSVList = fileUtil.readBTracked();
-        List<BTrackedBean> beanList = new ArrayList<>();
-
-        for (String line: bCSVList) {
-            beanList.add(convertBTrackedFromCSV(line));
         }
 
         return beanList;
