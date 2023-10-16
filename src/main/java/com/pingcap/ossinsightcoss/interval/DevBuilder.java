@@ -68,10 +68,6 @@ public class DevBuilder {
                 .collect(Collectors.toSet());
 
         refreshRepoNameStack.addAll(needTransfer);
-
-        // temp
-        addDevMonthlyDataTaskToStack();
-        addDevDailyDataTaskToStack();
     }
 
     @Scheduled(fixedDelay=1, timeUnit=TimeUnit.MINUTES)
