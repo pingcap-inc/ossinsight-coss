@@ -68,6 +68,10 @@ public class DevBuilder {
                 .collect(Collectors.toSet());
 
         refreshRepoNameStack.addAll(needTransfer);
+
+        // temp
+        addDevMonthlyDataTaskToStack();
+        addDevDailyDataTaskToStack();
     }
 
     @Scheduled(fixedDelay=1, timeUnit=TimeUnit.MINUTES)
@@ -94,9 +98,12 @@ public class DevBuilder {
     @Scheduled(fixedDelay=30, timeUnit=TimeUnit.SECONDS)
     public void pickOneDevDailyDataTask() {
         if (!refreshDevDailyStack.isEmpty()) {
-            cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(
-                    refreshDevDailyStack.pop().getGithubName()
-            );
+            COSSInvestBean invest = refreshDevDailyStack.pop();
+            if (invest != null) {
+                cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(
+                        invest.getGithubName()
+                );
+            }
         }
     }
 
@@ -115,9 +122,13 @@ public class DevBuilder {
     @Scheduled(fixedDelay=5, timeUnit=TimeUnit.MINUTES)
     public void pickOneDevMonthlyDataTask() {
         if (!refreshDevMonthlyStack.isEmpty()) {
-            cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(
-                    refreshDevDailyStack.pop().getGithubName()
-            );
+            COSSInvestBean invest = refreshDevDailyStack.pop();
+
+            if (invest != null) {
+                cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(
+                        invest.getGithubName()
+                );
+            }
         }
     }
 }
