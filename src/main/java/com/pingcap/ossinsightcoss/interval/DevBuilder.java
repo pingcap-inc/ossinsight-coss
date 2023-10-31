@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +37,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class DevBuilder {
+    Logger logger = Logger.getLogger(DevBuilder.class.getName());
+
     @Autowired
     COSSDevDailyRepository cossDevDailyRepository;
     @Autowired
@@ -110,7 +113,10 @@ public class DevBuilder {
     @Scheduled(cron = "0 10 0 1,2 * *")
     public void addDevMonthlyDataTaskToStack() {
         if (refreshDevMonthlyStack.isEmpty()) {
-            refreshDevMonthlyStack.addAll(cossInvestRepository.findAll());
+            // refresh tidb at first
+            List<COSSInvestBean> refreshList = cossInvestRepository.findAll();
+            refreshList.sort((o1, o2) -> o1.getGithubName().equals("pingcap/tidb") ? -1 : 1);
+            refreshDevMonthlyStack.addAll(refreshList);
         }
     }
 
@@ -119,6 +125,7 @@ public class DevBuilder {
     public void pickOneDevMonthlyDataTask() {
         if (!refreshDevMonthlyStack.isEmpty()) {
             COSSInvestBean invest = refreshDevDailyStack.pop();
+            logger.info("start transfer " + invest.getGithubName());
 
             if (invest != null) {
                 cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(
