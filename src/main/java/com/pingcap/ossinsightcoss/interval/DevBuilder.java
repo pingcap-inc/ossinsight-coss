@@ -71,6 +71,9 @@ public class DevBuilder {
                 .collect(Collectors.toSet());
 
         refreshRepoNameStack.addAll(needTransfer);
+
+        addDevMonthlyDataTaskToStack();
+        addDevDailyDataTaskToStack();
     }
 
     @Scheduled(fixedDelay=1, timeUnit=TimeUnit.MINUTES)
@@ -89,7 +92,7 @@ public class DevBuilder {
     @Scheduled(cron = "0 10 1 * * *")
     public void addDevDailyDataTaskToStack() {
         if (refreshDevDailyStack.isEmpty()) {
-            refreshDevDailyStack.addAll(cossInvestRepository.findAll());
+            refreshDevDailyStack.addAll(getRefreshRepoList());
         }
     }
 
@@ -98,6 +101,7 @@ public class DevBuilder {
     public void pickOneDevDailyDataTask() {
         if (!refreshDevDailyStack.isEmpty()) {
             COSSInvestBean invest = refreshDevDailyStack.pop();
+            logger.info("start transfer daily" + invest.getGithubName());
             if (invest != null) {
                 cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(
                         invest.getGithubName()
@@ -113,19 +117,16 @@ public class DevBuilder {
     @Scheduled(cron = "0 10 0 1,2 * *")
     public void addDevMonthlyDataTaskToStack() {
         if (refreshDevMonthlyStack.isEmpty()) {
-            // refresh tidb at first
-            List<COSSInvestBean> refreshList = cossInvestRepository.findAll();
-            refreshList.sort((o1, o2) -> o1.getGithubName().equals("pingcap/tidb") ? -1 : 1);
-            refreshDevMonthlyStack.addAll(refreshList);
+            refreshDevMonthlyStack.addAll(getRefreshRepoList());
         }
     }
 
-    // between each task, it will have 5m break.
-    @Scheduled(fixedDelay=5, timeUnit=TimeUnit.MINUTES)
+    // between each task, it will have 30s break.
+    @Scheduled(fixedDelay=30, timeUnit= TimeUnit.SECONDS)
     public void pickOneDevMonthlyDataTask() {
         if (!refreshDevMonthlyStack.isEmpty()) {
             COSSInvestBean invest = refreshDevDailyStack.pop();
-            logger.info("start transfer " + invest.getGithubName());
+            logger.info("start transfer monthly" + invest.getGithubName());
 
             if (invest != null) {
                 cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(
@@ -133,5 +134,16 @@ public class DevBuilder {
                 );
             }
         }
+    }
+
+    public List<COSSInvestBean> getRefreshRepoList() {
+        List<COSSInvestBean> refreshList = cossInvestRepository.findAll();
+        // refresh tidb first
+        refreshList.sort((repo1, repo2) -> {
+            String githubName = repo1.getGithubName();
+            return githubName != null && githubName.equals("pingcap/tidb") ? -1 : 1;
+        });
+
+        return refreshList;
     }
 }
