@@ -144,6 +144,8 @@ public class DevBuilder {
             return githubName != null && githubName.equals("pingcap/tidb") ? -1 : 1;
         });
 
+        logger.info("refresh list: " + refreshList.stream().map(COSSInvestBean::getGithubName).collect(Collectors.joining(",")));
+
         return refreshList;
     }
 }
