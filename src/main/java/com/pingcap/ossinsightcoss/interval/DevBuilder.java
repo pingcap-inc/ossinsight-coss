@@ -138,10 +138,10 @@ public class DevBuilder {
 
     public List<COSSInvestBean> getRefreshRepoList() {
         List<COSSInvestBean> refreshList = cossInvestRepository.findAll();
-        // refresh tidb first
+        // refresh tidb first, we use stack to pop, so let tidb be the last one in list
         refreshList.sort((repo1, repo2) -> {
             String githubName = repo1.getGithubName();
-            return githubName != null && githubName.equals("pingcap/tidb") ? -1 : 1;
+            return githubName != null && githubName.equals("pingcap/tidb") ? 1 : -1;
         });
 
         logger.info("refresh list: " + refreshList.stream().map(COSSInvestBean::getGithubName).collect(Collectors.joining(",")));
