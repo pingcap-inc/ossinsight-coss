@@ -50,6 +50,9 @@ public class DevBuilder {
 
     Stack<COSSInvestBean> refreshDevDailyStack = new Stack<>();
     Stack<COSSInvestBean> refreshDevMonthlyStack = new Stack<>();
+
+    // refreshRepoNameStack store the first time added repo name
+    // Which means we need to refresh the whole repo data
     Stack<String> refreshRepoNameStack = new Stack<>();
 
     @PostConstruct
@@ -71,9 +74,6 @@ public class DevBuilder {
                 .collect(Collectors.toSet());
 
         refreshRepoNameStack.addAll(needTransfer);
-
-        addDevMonthlyDataTaskToStack();
-        addDevDailyDataTaskToStack();
     }
 
     @Scheduled(fixedDelay=1, timeUnit=TimeUnit.MINUTES)
@@ -103,7 +103,7 @@ public class DevBuilder {
             COSSInvestBean invest = refreshDevDailyStack.pop();
             logger.info("start transfer daily" + invest.getGithubName());
             if (invest != null) {
-                cossDevDailyRepository.transferCOSSDevDailyBeanByRepoName(
+                cossDevDailyRepository.transferLatest30DaysCOSSDevDailyBeanByRepoName(
                         invest.getGithubName()
                 );
             }

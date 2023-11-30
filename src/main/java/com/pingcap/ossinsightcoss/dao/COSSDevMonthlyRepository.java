@@ -40,6 +40,7 @@ public interface COSSDevMonthlyRepository extends JpaRepository<COSSDevMonthlyBe
         pr_dev_num, issue_dev_num
     )
     SELECT
+        /*+ READ_FROM_STORAGE(TIFLASH[ge, ci]) */
         ci.github_name AS raw_github_name,
         ge.event_month AS event_month,
     
@@ -48,7 +49,7 @@ public interface COSSDevMonthlyRepository extends JpaRepository<COSSDevMonthlyBe
         COUNT(CASE WHEN ge.type = "PullRequestEvent" THEN 1 ELSE NULL END) AS raw_pr_num,
         COUNT(CASE WHEN ge.type = "IssuesEvent" THEN 1 ELSE NULL END) AS raw_issue_num,
     
-        COUNT(DISTINCT ge.actor_id) raw_dev_num,
+        COUNT(DISTINCT ge.actor_id) AS raw_dev_num,
         COUNT(DISTINCT CASE WHEN ge.type = "WatchEvent" THEN ge.actor_id ELSE NULL END) AS raw_star_dev_num,
         COUNT(DISTINCT CASE WHEN ge.type = "PullRequestEvent" THEN ge.actor_id ELSE NULL END) AS raw_pr_dev_num,
         COUNT(DISTINCT CASE WHEN ge.type = "IssuesEvent" THEN ge.actor_id ELSE NULL END) AS raw_issue_dev_num

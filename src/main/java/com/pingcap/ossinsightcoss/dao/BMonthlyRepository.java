@@ -49,6 +49,7 @@ public interface BMonthlyRepository extends JpaRepository<BMonthlyBean, Long> {
         UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH),'%Y-%m-01') AS m
     ), monthly AS (
         SELECT
+            /*+ READ_FROM_STORAGE(TIFLASH[ge]) */
             ge.repo_name AS github_name,
             ge.event_month AS event_month,
             COUNT(CASE WHEN ge.type = "WatchEvent" THEN 1 ELSE NULL END) AS star_num,

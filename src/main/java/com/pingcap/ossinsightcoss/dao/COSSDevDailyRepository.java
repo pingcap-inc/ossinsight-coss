@@ -42,6 +42,7 @@ public interface COSSDevDailyRepository extends JpaRepository<COSSDevDailyBean, 
         pr_dev_num, issue_dev_num
     )
     SELECT
+        /*+ READ_FROM_STORAGE(TIFLASH[ge, ci]) */
         ci.github_name AS raw_github_name,
         ge.event_day AS raw_event_day,
     
@@ -50,7 +51,7 @@ public interface COSSDevDailyRepository extends JpaRepository<COSSDevDailyBean, 
         COUNT(CASE WHEN ge.type = "PullRequestEvent" THEN 1 ELSE NULL END) AS raw_pr_num,
         COUNT(CASE WHEN ge.type = "IssuesEvent" THEN 1 ELSE NULL END) AS raw_issue_num,
     
-        COUNT(DISTINCT ge.actor_id) raw_dev_num,
+        COUNT(DISTINCT ge.actor_id) AS raw_dev_num,
         COUNT(DISTINCT CASE WHEN ge.type = "WatchEvent" THEN ge.actor_id ELSE NULL END) AS raw_star_dev_num,
         COUNT(DISTINCT CASE WHEN ge.type = "PullRequestEvent" THEN ge.actor_id ELSE NULL END) AS raw_pr_dev_num,
         COUNT(DISTINCT CASE WHEN ge.type = "IssuesEvent" THEN ge.actor_id ELSE NULL END) AS raw_issue_dev_num
@@ -70,4 +71,45 @@ public interface COSSDevDailyRepository extends JpaRepository<COSSDevDailyBean, 
         pr_dev_num = raw_pr_dev_num, issue_dev_num = raw_issue_dev_num
     """, nativeQuery = true)
     Integer transferCOSSDevDailyBeanByRepoName(@Param("repo_name") String repoName);
+
+    @Modifying
+    @Transactional
+    @Query(value = """
+    INSERT INTO mv_coss_dev_day (
+        github_name, event_day, 
+        event_num, star_num, 
+        pr_num, issue_num, 
+        dev_num, star_dev_num, 
+        pr_dev_num, issue_dev_num
+    )
+    SELECT
+        ci.github_name AS raw_github_name,
+        ge.event_day AS raw_event_day,
+    
+        COUNT(*) raw_event_num,
+        COUNT(CASE WHEN ge.type = "WatchEvent" THEN 1 ELSE NULL END) AS raw_star_num,
+        COUNT(CASE WHEN ge.type = "PullRequestEvent" THEN 1 ELSE NULL END) AS raw_pr_num,
+        COUNT(CASE WHEN ge.type = "IssuesEvent" THEN 1 ELSE NULL END) AS raw_issue_num,
+    
+        COUNT(DISTINCT ge.actor_id) AS raw_dev_num,
+        COUNT(DISTINCT CASE WHEN ge.type = "WatchEvent" THEN ge.actor_id ELSE NULL END) AS raw_star_dev_num,
+        COUNT(DISTINCT CASE WHEN ge.type = "PullRequestEvent" THEN ge.actor_id ELSE NULL END) AS raw_pr_dev_num,
+        COUNT(DISTINCT CASE WHEN ge.type = "IssuesEvent" THEN ge.actor_id ELSE NULL END) AS raw_issue_dev_num
+    FROM github_events ge
+    INNER JOIN coss_invest ci ON ci.github_name = ge.repo_name
+    AND ci.company IS NOT NULL
+    AND ci.github_name IS NOT NULL
+    AND ci.has_github = TRUE
+    AND ci.has_repo = TRUE
+    AND ci.github_name = :repo_name
+    AND ge.created_at < CURRENT_DATE()
+    AND ge.created_at >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
+    GROUP BY ci.github_name, ge.event_day
+    ON DUPLICATE KEY UPDATE 
+        event_num = raw_event_num, star_num = raw_star_num, 
+        pr_num = raw_pr_num, issue_num = raw_issue_num, 
+        dev_num = raw_dev_num, star_dev_num = raw_star_dev_num, 
+        pr_dev_num = raw_pr_dev_num, issue_dev_num = raw_issue_dev_num
+    """, nativeQuery = true)
+    Integer transferLatest30DaysCOSSDevDailyBeanByRepoName(@Param("repo_name") String repoName);
 }
