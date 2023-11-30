@@ -69,7 +69,9 @@ public class DevBuilder {
         }
         cossInvestRepository.saveAll(needAdd);
         Set<String> needTransfer = needAdd.stream()
-                .filter(o -> o.getHasGithub() && o.getHasRepo())
+                .filter(o -> o.getHasGithub() && o.getHasRepo() &&
+                        o.getCompany() != null && !o.getCompany().isEmpty() &&
+                        o.getGithubName() != null && !o.getGithubName().isEmpty())
                 .map(COSSInvestBean::getGithubName)
                 .collect(Collectors.toSet());
 
@@ -129,7 +131,7 @@ public class DevBuilder {
             logger.info("start transfer monthly" + invest.getGithubName());
 
             if (invest != null) {
-                cossDevMonthlyRepository.transferCOSSDevMonthlyBeanByRepoName(
+                cossDevMonthlyRepository.transferLatest12MonthsCOSSDevMonthlyBeanByRepoName(
                         invest.getGithubName()
                 );
             }
@@ -139,7 +141,11 @@ public class DevBuilder {
     public List<COSSInvestBean> getRefreshRepoList() {
         List<COSSInvestBean> refreshList = cossInvestRepository.findAll();
         // refresh tidb first, we use stack to pop, so let tidb be the last one in list
-        refreshList.sort((repo1, repo2) -> {
+        refreshList.stream().filter(
+                o -> o.getHasGithub() && o.getHasRepo() &&
+                        o.getCompany() != null && !o.getCompany().isEmpty() &&
+                        o.getGithubName() != null && !o.getGithubName().isEmpty()
+        ).collect(Collectors.toList()).sort((repo1, repo2) -> {
             String githubName = repo1.getGithubName();
             return githubName != null && githubName.equals("pingcap/tidb") ? 1 : -1;
         });
