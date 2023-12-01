@@ -58,7 +58,7 @@ public interface BMonthlyRepository extends JpaRepository<BMonthlyBean, Long> {
             JOIN github_repos gr ON gr.repo_id = ge.repo_id
             WHERE ge.repo_id = (SELECT repo_id FROM github_repos WHERE repo_name = :repo_name)
             AND ge.type IN ('WatchEvent', 'PullRequestEvent', 'ForkEvent')
-            AND ge.action IN ('opened', 'closed', 'reopened', 'created', 'started')
+            AND ge.action IN ('opened', 'created', 'started')
             AND ge.created_at < DATE_FORMAT(CURRENT_DATE(),'%Y-%m-01')
             GROUP BY ge.repo_id, raw_event_month
         )
