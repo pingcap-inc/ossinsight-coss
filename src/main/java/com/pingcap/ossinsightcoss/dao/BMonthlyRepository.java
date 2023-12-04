@@ -34,41 +34,44 @@ public interface BMonthlyRepository extends JpaRepository<BMonthlyBean, Long> {
         github_name, event_month, 
         star_num, pr_num, fork_num
     )
-    WITH monthes AS (
-        SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH),'%Y-%m-01') AS m
-        UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH),'%Y-%m-01') AS m
-        UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 10 MONTH),'%Y-%m-01') AS m
-        UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 9 MONTH),'%Y-%m-01') AS m
-        UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 8 MONTH),'%Y-%m-01') AS m
-        UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 7 MONTH),'%Y-%m-01') AS m
-        UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH),'%Y-%m-01') AS m
-        UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 5 MONTH),'%Y-%m-01') AS m
-        UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 4 MONTH),'%Y-%m-01') AS m
-        UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 3 MONTH),'%Y-%m-01') AS m
-        UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 2 MONTH),'%Y-%m-01') AS m
-        UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH),'%Y-%m-01') AS m
-    ), monthly AS (
+            WITH monthes AS (
+            SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH),'%Y-%m-01') AS m
+            UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 11 MONTH),'%Y-%m-01') AS m
+            UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 10 MONTH),'%Y-%m-01') AS m
+            UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 9 MONTH),'%Y-%m-01') AS m
+            UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 8 MONTH),'%Y-%m-01') AS m
+            UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 7 MONTH),'%Y-%m-01') AS m
+            UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH),'%Y-%m-01') AS m
+            UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 5 MONTH),'%Y-%m-01') AS m
+            UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 4 MONTH),'%Y-%m-01') AS m
+            UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 3 MONTH),'%Y-%m-01') AS m
+            UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 2 MONTH),'%Y-%m-01') AS m
+            UNION ALL SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH),'%Y-%m-01') AS m
+        ), monthly AS (
+            SELECT
+                gr.repo_name AS github_name,
+                DATE_FORMAT(ge.created_at, '%Y-%m-01') AS raw_event_month,
+                COUNT(CASE WHEN ge.type = "WatchEvent" THEN 1 ELSE NULL END) AS star_num,
+                COUNT(CASE WHEN ge.type = "PullRequestEvent" THEN 1 ELSE NULL END) AS pr_num,
+                COUNT(CASE WHEN ge.type = "ForkEvent" THEN 1 ELSE NULL END) AS fork_num
+            FROM github_events ge
+            JOIN github_repos gr ON gr.repo_id = ge.repo_id
+            WHERE ge.repo_id = (SELECT repo_id FROM github_repos WHERE repo_name = :repo_name)
+            AND ge.type IN ('WatchEvent', 'PullRequestEvent', 'ForkEvent')
+            AND ge.action IN ('opened', 'created', 'started')
+            AND ge.created_at < DATE_FORMAT(CURRENT_DATE(),'%Y-%m-01')
+            GROUP BY ge.repo_id, raw_event_month
+        )
         SELECT
-            ge.repo_name AS github_name,
-            ge.event_month AS event_month,
-            COUNT(CASE WHEN ge.type = "WatchEvent" THEN 1 ELSE NULL END) AS star_num,
-            COUNT(CASE WHEN ge.type = "PullRequestEvent" THEN 1 ELSE NULL END) AS pr_num,
-            COUNT(CASE WHEN ge.type = "ForkEvent" THEN 1 ELSE NULL END) AS fork_num
-        FROM github_events ge
-        WHERE ge.repo_name = :repo_name
-        AND ge.event_month != DATE_FORMAT(CURRENT_DATE(),'%Y-%m-01')
-        GROUP BY ge.repo_name, ge.event_month
-    )
-    SELECT
-        monthly.github_name AS raw_github_name,
-        monthes.m,
-        SUM(monthly.star_num) AS raw_star_num,
-        SUM(monthly.pr_num) AS raw_pr_num,
-        SUM(monthly.fork_num) AS raw_fork_num
-    FROM monthly JOIN monthes
-    WHERE monthes.m >= monthly.event_month
-    GROUP BY monthes.m
-    ORDER BY monthly.github_name, monthes.m
+            monthly.github_name AS raw_github_name,
+            monthes.m,
+            SUM(monthly.star_num) AS raw_star_num,
+            SUM(monthly.pr_num) AS raw_pr_num,
+            SUM(monthly.fork_num) AS raw_fork_num
+        FROM monthly JOIN monthes
+        WHERE monthes.m >= monthly.raw_event_month
+        GROUP BY monthes.m
+        ORDER BY monthly.github_name, monthes.m
     ON DUPLICATE KEY UPDATE 
         star_num = raw_star_num, pr_num = raw_pr_num, fork_num = raw_fork_num
     """, nativeQuery = true)
