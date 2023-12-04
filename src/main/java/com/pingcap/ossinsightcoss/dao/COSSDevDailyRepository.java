@@ -54,7 +54,7 @@ public interface COSSDevDailyRepository extends JpaRepository<COSSDevDailyBean, 
         COUNT(DISTINCT IF(ge.type = 'IssuesEvent', ge.actor_login, NULL))                AS raw_issue_dev_num
     FROM github_events ge
     JOIN github_repos gr ON gr.repo_id = ge.repo_id
-    WHERE ge.repo_id = (SELECT repo_id FROM github_repos WHERE repo_name = :repo_name)
+    WHERE ge.repo_id = (SELECT repo_id FROM github_repos WHERE repo_name = :repo_name ORDER BY repo_id DESC LIMIT 1)
         AND ge.type IN ('WatchEvent', 'PullRequestEvent', 'IssuesEvent')
         AND ge.action IN ('opened', 'created', 'started')
         AND ge.created_at < CURRENT_DATE()
@@ -90,7 +90,7 @@ public interface COSSDevDailyRepository extends JpaRepository<COSSDevDailyBean, 
         COUNT(DISTINCT IF(ge.type = 'IssuesEvent', ge.actor_login, NULL))                AS raw_issue_dev_num
     FROM github_events ge
     JOIN github_repos gr ON gr.repo_id = ge.repo_id
-    WHERE ge.repo_id = (SELECT repo_id FROM github_repos WHERE repo_name = :repo_name)
+    WHERE ge.repo_id = (SELECT repo_id FROM github_repos WHERE repo_name = :repo_name ORDER BY repo_id DESC LIMIT 1)
         AND ge.type IN ('WatchEvent', 'PullRequestEvent', 'IssuesEvent')
         AND ge.action IN ('opened', 'created', 'started')
         AND ge.created_at < CURRENT_DATE()
