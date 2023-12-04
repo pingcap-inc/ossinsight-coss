@@ -103,8 +103,8 @@ public class DevBuilder {
     public void pickOneDevDailyDataTask() {
         if (!refreshDevDailyStack.isEmpty()) {
             COSSInvestBean invest = refreshDevDailyStack.pop();
-            logger.info("start transfer daily" + invest.getGithubName());
             if (invest != null) {
+                logger.info("start transfer daily" + invest.getGithubName());
                 cossDevDailyRepository.transferLatest30DaysCOSSDevDailyBeanByRepoName(
                         invest.getGithubName()
                 );
@@ -128,9 +128,9 @@ public class DevBuilder {
     public void pickOneDevMonthlyDataTask() {
         if (!refreshDevMonthlyStack.isEmpty()) {
             COSSInvestBean invest = refreshDevDailyStack.pop();
-            logger.info("start transfer monthly" + invest.getGithubName());
 
             if (invest != null) {
+                logger.info("start transfer monthly" + invest.getGithubName());
                 cossDevMonthlyRepository.transferLatest12MonthsCOSSDevMonthlyBeanByRepoName(
                         invest.getGithubName()
                 );
