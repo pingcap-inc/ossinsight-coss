@@ -39,9 +39,10 @@ public class FileUtil {
 
     public List<String> readAllExpectFirstLine(String filePath) throws IOException {
         Resource resource = new ClassPathResource(filePath);
-        InputStream inputStream = new BufferedInputStream(resource.getInputStream());
-        return new BufferedReader(new InputStreamReader(inputStream))
-                .lines().skip(1).toList();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
+            return reader.lines().skip(1).toList();
+        }
     }
 
     public List<String> readCOSSInvest() {

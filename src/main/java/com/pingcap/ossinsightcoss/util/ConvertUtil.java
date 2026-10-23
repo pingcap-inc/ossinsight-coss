@@ -41,8 +41,6 @@ public class ConvertUtil {
 
     private static final int DATA_LENGTH = 13;
 
-    SimpleDateFormat normalFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     public COSSInvestBean convertFromCSV (String csvLine) throws Exception {
         // "id","company","repository","stage","round_size","year","month","lead_investor","has_repo","has_github","github_name","date","link"
         // "1","Acryl Data","https://github.com/datahub-project/datahub","Seed","9","2021","6","8VC","1","1","datahub-project/datahub","1/6/2021 00:00:00","https://techcrunch.com/2021/06/23/acryl-data-commercializing-linkedins-metadata-tool-datahub-emerges-from-stealth-with-9m-from-8vc-linkedin-and-insight/"
@@ -70,7 +68,8 @@ public class ConvertUtil {
         result.setHasRepo(Integer.parseInt(params[8]) == 1);
         result.setHasGithub(Integer.parseInt(params[9]) == 1);
         result.setGithubName(params[10]);
-        result.setDate(normalFormat.parse(params[11]));
+        // SimpleDateFormat is not thread-safe, and this is also called from the /config endpoint
+        result.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(params[11]));
         result.setLink(params[12]);
 
         return result;

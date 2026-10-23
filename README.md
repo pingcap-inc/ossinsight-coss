@@ -8,6 +8,22 @@ Just update [this table](src/main/resources/data/coss_invest.csv) in a PR. If th
 
 Technically, we used some CD pipelines on a server. So, updating this table is enough to let data updated.
 
+## Configuration
+
+Copy [application.example.yaml](application.example.yaml) and provide secrets through environment variables:
+
+- `COSS_GITHUB_TOKEN`: GitHub token used to fetch repository metadata
+- `COSS_ADMIN_TOKEN`: enables the manual refresh endpoint
+- `COSS_DB_USERNAME` / `COSS_DB_PASSWORD`: database credentials
+
+Do not commit `application.yaml` or any token.
+
+To trigger a monthly data refresh manually:
+
+```bash
+curl -X POST -H "X-Admin-Token: $COSS_ADMIN_TOKEN" http://localhost:8080/manually
+```
+
 ## Data Visualize and Output
 
 - [Dashboard](https://meta.gharchive.live/public/dashboard/edb8aa5b-2c4e-465d-8aec-541594df5b83)

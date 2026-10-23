@@ -18,7 +18,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 /**
  * Config
@@ -33,6 +32,7 @@ public class Config {
 
     private String tablePath = "";
     private String githubToken = "";
+    private String adminToken = "";
 
     public String getTablePath() {
         return tablePath;
@@ -48,5 +48,13 @@ public class Config {
 
     public void setGithubToken(String githubToken) {
         this.githubToken = githubToken;
+    }
+
+    public String getAdminToken() {
+        return adminToken;
+    }
+
+    public void setAdminToken(String adminToken) {
+        this.adminToken = adminToken;
     }
 }

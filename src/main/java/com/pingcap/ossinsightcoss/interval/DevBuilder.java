@@ -104,7 +104,7 @@ public class DevBuilder {
         if (!refreshDevDailyStack.isEmpty()) {
             COSSInvestBean invest = refreshDevDailyStack.pop();
             if (invest != null) {
-                logger.info("start transfer daily" + invest.getGithubName());
+                logger.info("start transfer daily " + invest.getGithubName());
                 cossDevDailyRepository.transferLatest30DaysCOSSDevDailyBeanByRepoName(
                         invest.getGithubName()
                 );
@@ -127,10 +127,10 @@ public class DevBuilder {
     @Scheduled(fixedDelay=30, timeUnit= TimeUnit.SECONDS)
     public void pickOneDevMonthlyDataTask() {
         if (!refreshDevMonthlyStack.isEmpty()) {
-            COSSInvestBean invest = refreshDevDailyStack.pop();
+            COSSInvestBean invest = refreshDevMonthlyStack.pop();
 
             if (invest != null) {
-                logger.info("start transfer monthly" + invest.getGithubName());
+                logger.info("start transfer monthly " + invest.getGithubName());
                 cossDevMonthlyRepository.transferLatest12MonthsCOSSDevMonthlyBeanByRepoName(
                         invest.getGithubName()
                 );
@@ -139,16 +139,13 @@ public class DevBuilder {
     }
 
     public List<COSSInvestBean> getRefreshRepoList() {
-        List<COSSInvestBean> refreshList = cossInvestRepository.findAll();
-        // refresh tidb first, we use stack to pop, so let tidb be the last one in list
-        refreshList.stream().filter(
+        List<COSSInvestBean> refreshList = cossInvestRepository.findAll().stream().filter(
                 o -> o.getHasGithub() && o.getHasRepo() &&
                         o.getCompany() != null && !o.getCompany().isEmpty() &&
                         o.getGithubName() != null && !o.getGithubName().isEmpty()
-        ).collect(Collectors.toList()).sort((repo1, repo2) -> {
-            String githubName = repo1.getGithubName();
-            return githubName != null && githubName.equals("pingcap/tidb") ? 1 : -1;
-        });
+        ).collect(Collectors.toList());
+        // refresh tidb first, we use stack to pop, so let tidb be the last one in list
+        refreshList.sort(Comparator.comparing(o -> o.getGithubName().equals("pingcap/tidb")));
 
         logger.info("refresh list: " + refreshList.stream().map(COSSInvestBean::getGithubName).collect(Collectors.joining(",")));
 
