@@ -5,6 +5,7 @@ import com.pingcap.ossinsightcoss.dao.COSSInvestRepository;
 import com.pingcap.ossinsightcoss.dao.COSSRepoBean;
 import com.pingcap.ossinsightcoss.dao.COSSRepoRepository;
 import com.pingcap.ossinsightcoss.github.GitHubRepository;
+import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -50,11 +51,11 @@ public class RepoBuilder {
     @Scheduled(fixedDelay=5, timeUnit= TimeUnit.SECONDS)
     public void consumeRefreshTask() {
         if (!refreshRepoNameStack.isEmpty()) {
-            cossRepoRepository.save(
-                    gitHubRepository.convert(
-                            gitHubRepository.get(refreshRepoNameStack.pop())
-                    )
-            );
+            // get() returns null when the repo is missing, renamed or rate limited
+            GHRepository ghRepo = gitHubRepository.get(refreshRepoNameStack.pop());
+            if (ghRepo != null) {
+                cossRepoRepository.save(gitHubRepository.convert(ghRepo));
+            }
         }
     }
 }

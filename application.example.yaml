@@ -1,0 +1,20 @@
+# Example config. Copy it outside the repo (pm2.json reads /home/ubuntu/config/application.yaml)
+# or to src/main/resources/application.yaml, which is git-ignored.
+# Never commit real credentials: keep them in environment variables.
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:4000/gharchive_dev
+    username: ${COSS_DB_USERNAME:root}
+    password: ${COSS_DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+logging:
+  file:
+    name: ossinsight-coss.log
+coss:
+  table-path: data/coss_invest.csv
+  # Only reads public repo metadata: use a fine-grained token with no extra permissions.
+  github-token: ${COSS_GITHUB_TOKEN:}
+  # Required by POST /manually. Leave empty to disable that endpoint.
+  admin-token: ${COSS_ADMIN_TOKEN:}

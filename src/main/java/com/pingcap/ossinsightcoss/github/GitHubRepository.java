@@ -22,9 +22,14 @@ public class GitHubRepository {
 
     @PostConstruct
     public void init () throws IOException {
-        github = new GitHubBuilder()
-                .withJwtToken(config.getGithubToken())
-                .build();
+        // coss.github-token is a personal access token, not a GitHub App JWT.
+        // Without one, fall back to anonymous access (60 requests/hour).
+        GitHubBuilder builder = new GitHubBuilder();
+        String token = config.getGithubToken();
+        if (token != null && !token.isEmpty()) {
+            builder.withOAuthToken(token);
+        }
+        github = builder.build();
     }
 
     public GHRepository get(String name) {
